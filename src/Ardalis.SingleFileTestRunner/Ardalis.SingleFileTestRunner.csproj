@@ -8,20 +8,19 @@
     <Company>Ardalis.com</Company>
     <Description>A simple test runner for single-file xUnit tests.</Description>
     <Summary>A simple test runner for single-file xUnit tests.</Summary>
-    <PackageProjectUrl>https://github.com/ardalis/Ardalis.SingleFileTestRunner</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/ardalis/Ardalis.SingleFileTestRunner</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ardalis/SingleFileTestRunner</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ardalis/SingleFileTestRunner</RepositoryUrl>
     <PackageTags>C#;csharp;single-file;xunit;test-runner;single-file-tests</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
     <PackageReleaseNotes>
-      * Change xunit to privateassets=none so it flows to consumers
+      * Fix repo link in package metadata
     </PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <DocumentationFile>bin\$(Configuration)\Ardalis.SingleFileTestRunner.xml</DocumentationFile>
     <IsPackable>true</IsPackable>
-
   </PropertyGroup>
 
   <ItemGroup>
