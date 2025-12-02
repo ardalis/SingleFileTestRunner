@@ -4,7 +4,6 @@
     <AssemblyName>Ardalis.SingleFileTestRunner</AssemblyName>
     <PackageId>Ardalis.SingleFileTestRunner</PackageId>
     <Title>Ardalis.SingleFileTestRunner</Title>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Steve Smith (@ardalis)</Authors>
     <Company>Ardalis.com</Company>
     <Description>A simple test runner for single-file xUnit tests.</Description>
