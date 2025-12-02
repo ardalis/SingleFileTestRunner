@@ -5,4 +5,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageOutputPath Condition="'$(PackageOutputPath)' == ''">$(MSBuildThisFileDirectory)artifacts\package\$(Configuration)</PackageOutputPath>
+  </PropertyGroup>
 </Project>

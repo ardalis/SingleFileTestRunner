@@ -19,7 +19,8 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <DocumentationFile>bin\$(Configuration)\Ardalis.SingleFileTestRunner.xml</DocumentationFile>    
+    <DocumentationFile>bin\$(Configuration)\Ardalis.SingleFileTestRunner.xml</DocumentationFile>
+    <IsPackable>true</IsPackable>
 
   </PropertyGroup>
 
