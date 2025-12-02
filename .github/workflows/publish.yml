@@ -5,47 +5,16 @@ on:
   release:
     types: [published]
 
-env:
-  PROJECT_FILE: src/Ardalis.SingleFileTestRunner/Ardalis.SingleFileTestRunner.csproj
-  PACK_OUTPUT: artifacts/package/release
-
 jobs:
-  build:
+  publish:
+    uses: ardalis/github-workflows/.github/workflows/dotnet-publish.yml@main
     permissions:
       contents: read
       id-token: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Restore dependencies
-        run: dotnet restore "${{ env.PROJECT_FILE }}"
-
-      - name: Build
-        run: dotnet build "${{ env.PROJECT_FILE }}" --configuration Release --no-restore
-
-      - name: Pack
-        run: dotnet pack "${{ env.PROJECT_FILE }}" --configuration Release --no-build --no-restore --output "${{ env.PACK_OUTPUT }}"
-
-      - name: NuGet login (OIDC -> temp API key)
-        uses: NuGet/login@v1
-        id: login
-        with:
-          user: ${{ secrets.NUGET_USER }}
-
-      - name: Push to NuGet
-        #if: ${{ github.event_name == 'release' && github.event.action == 'published' && github.event.release.tag_name != '' }}
-        shell: pwsh
-        run: |
-          Get-ChildItem "${{ env.PACK_OUTPUT }}" -Filter *.nupkg |
-          ForEach-Object {
-            dotnet nuget push $_.FullName `
-              --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" `
-              --source https://api.nuget.org/v3/index.json
-          }
+    with:
+      project-file: 'src/Ardalis.SingleFileTestRunner/Ardalis.SingleFileTestRunner.csproj'
+      dotnet-version: '10.x'
+      pack-output: 'artifacts/package/release'
+      configuration: 'Release'
+    secrets:
+      NUGET_USER: ${{ secrets.NUGET_USER }}
