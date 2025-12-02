@@ -1,4 +1,4 @@
-name: Publish to NuGet
+name: Publish to NuGet using ardalis/github-workflows
 
 on:
   workflow_dispatch:
