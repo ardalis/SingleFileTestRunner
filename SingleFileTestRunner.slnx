@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ardalis.SingleFileTestRunner/Ardalis.SingleFileTestRunner.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ardalis.SingleFileTestRunner.Tests/Ardalis.SingleFileTestRunner.Tests.csproj" />
+  </Folder>
+</Solution>
