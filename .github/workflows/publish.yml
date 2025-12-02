@@ -8,13 +8,10 @@ on:
 jobs:
   publish:
     uses: ardalis/github-workflows/.github/workflows/dotnet-publish.yml@main
-    permissions:
-      contents: read
-      id-token: write
     with:
       project-file: 'src/Ardalis.SingleFileTestRunner/Ardalis.SingleFileTestRunner.csproj'
       dotnet-version: '10.x'
       pack-output: 'artifacts/package/release'
       configuration: 'Release'
     secrets:
-      NUGET_USER: ${{ secrets.NUGET_USER }}
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
