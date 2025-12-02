@@ -8,6 +8,9 @@ on:
 jobs:
   publish:
     uses: ardalis/github-workflows/.github/workflows/dotnet-publish.yml@main
+    permissions:
+      contents: read
+      id-token: write    
     with:
       project-file: 'src/Ardalis.SingleFileTestRunner/Ardalis.SingleFileTestRunner.csproj'
       dotnet-version: '10.x'
