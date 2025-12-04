@@ -84,13 +84,13 @@ public static class TestRunner
                 Console.Write("  [FAIL] ");
                 Console.ResetColor();
                 Console.WriteLine(testName);
-                if (args.Message.Messages?.Length > 0)
+                if (args.Message.Messages != null && args.Message.Messages.Length > 0 && args.Message.Messages[0] != null)
                 {
                     Console.WriteLine($"         {args.Message.Messages[0]}");
                 }
-                if (args.Message.StackTraces?.Length > 0 && args.Message.StackTraces[0] != null && !string.IsNullOrEmpty(args.Message.StackTraces[0]))
+                if (args.Message.StackTraces != null && args.Message.StackTraces.Length > 0 && args.Message.StackTraces[0] != null && !string.IsNullOrEmpty(args.Message.StackTraces[0]))
                 {
-                    foreach (var line in args.Message.StackTraces[0].Split('\n'))
+                    foreach (var line in args.Message.StackTraces[0]!.Split('\n'))
                     {
                         Console.WriteLine($"         {line}");
                     }
@@ -131,7 +131,7 @@ public static class TestRunner
         // Create XunitProjectAssembly for the test assembly
         var project = new XunitProject();
         var targetFramework = assembly.GetCustomAttribute<System.Runtime.Versioning.TargetFrameworkAttribute>()?.FrameworkName 
-            ?? ".NETCoreApp,Version=v10.0";
+            ?? $".NETCoreApp,Version=v{Environment.Version.Major}.{Environment.Version.Minor}";
         var metadata = new AssemblyMetadata(3, targetFramework); // xUnit v3
         var projectAssembly = new XunitProjectAssembly(project, assemblyPath, metadata)
         {
