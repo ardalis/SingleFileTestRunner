@@ -1,25 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Ardalis.SingleFileTestRunner</AssemblyName>
-    <PackageId>Ardalis.SingleFileTestRunner</PackageId>
-    <Title>Ardalis.SingleFileTestRunner</Title>
+    <AssemblyName>Ardalis.SingleFileTestRunner.xUnitV3</AssemblyName>
+    <PackageId>Ardalis.SingleFileTestRunner.xUnitV3</PackageId>
+    <Title>Ardalis.SingleFileTestRunner.xUnitV3</Title>
     <Authors>Steve Smith (@ardalis)</Authors>
     <Company>Ardalis.com</Company>
-    <Description>A simple test runner for single-file xUnit tests.</Description>
-    <Summary>A simple test runner for single-file xUnit tests.</Summary>
+    <Description>A simple test runner for single-file xUnit v3 tests.</Description>
+    <Summary>A simple test runner for single-file xUnit v3 tests.</Summary>
     <PackageProjectUrl>https://github.com/ardalis/SingleFileTestRunner</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ardalis/SingleFileTestRunner</RepositoryUrl>
-    <PackageTags>C#;csharp;single-file;xunit;test-runner;single-file-tests</PackageTags>
+    <PackageTags>C#;csharp;single-file;xunit;xunit-v3;test-runner;single-file-tests</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>0.4.0</Version>
+    <Version>1.0.0</Version>
     <PackageReleaseNotes>
-      * Fix repo link in package metadata
+      * Upgraded to xUnit v3
+      * Breaking change: Package renamed to Ardalis.SingleFileTestRunner.xUnitV3
+      * Uses xUnit v3 event-based runner API
     </PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <DocumentationFile>bin\$(Configuration)\Ardalis.SingleFileTestRunner.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\Ardalis.SingleFileTestRunner.xUnitV3.xml</DocumentationFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -33,8 +35,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" PrivateAssets="none" />
-    <PackageReference Include="xunit.runner.utility" />
+    <PackageReference Include="xunit.v3.extensibility.core" PrivateAssets="none" />
+    <PackageReference Include="xunit.v3.runner.inproc.console" />
+    <PackageReference Include="xunit.v3.runner.common" />
   </ItemGroup>
 
 </Project>

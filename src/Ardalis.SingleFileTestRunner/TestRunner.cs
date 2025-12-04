@@ -1,42 +1,96 @@
-﻿using Xunit.Runners;
+﻿using Xunit.Runner.Common;
+using Xunit.Runner.InProc.SystemConsole;
+using Xunit.Sdk;
+using System.Reflection;
 
 namespace Ardalis.SingleFileTestRunner;
 
 /// <summary>
-/// A simple test runner for single-file xUnit tests.
+/// A simple test runner for single-file xUnit v3 tests.
 /// </summary>
 public static class TestRunner
 {
+    // Track if we're already running to prevent recursive execution
+    private static int _isRunning = 0;
+    
     /// <summary>
     /// Discovers and runs all xUnit tests in the current assembly.
     /// </summary>
     /// <returns>0 if all tests pass, 1 if any tests fail.</returns>
     public static async Task<int> RunTestsAsync()
     {
-        // Use Environment.ProcessPath for single-file apps (Assembly.Location returns empty string)
-        var assemblyPath = Environment.ProcessPath!;
+        // Prevent recursive execution when tests call RunTestsAsync
+        if (Interlocked.CompareExchange(ref _isRunning, 1, 0) != 0)
+        {
+            return 0; // Already running, return success
+        }
+
+        try
+        {
+            return await RunTestsAsyncCore();
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _isRunning, 0);
+        }
+    }
+
+    private static async Task<int> RunTestsAsyncCore()
+    {
+        // Use Environment.ProcessPath for single-file apps (Assembly.Location returns empty string).
+        // For test scenarios under test hosts, ProcessPath points to the test host, not the test DLL.
+        // Use Assembly.Location as fallback only if ProcessPath is not a DLL.
+        var processPath = Environment.ProcessPath!;
+        var entryAssembly = Assembly.GetEntryAssembly();
+        
+        string assemblyPath;
+        if (processPath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+        {
+            assemblyPath = processPath;
+        }
+        else if (entryAssembly != null && !string.IsNullOrEmpty(entryAssembly.Location))
+        {
+            assemblyPath = entryAssembly.Location;
+        }
+        else
+        {
+            assemblyPath = processPath;
+        }
 
         Console.WriteLine("Discovering and running tests...\n");
-
-        var runner = AssemblyRunner.WithoutAppDomain(assemblyPath);
 
         int passed = 0, failed = 0, skipped = 0;
         var startTime = DateTime.Now;
         var consoleLock = new object();
+        
+        // Track test display names using test unique IDs
+        var testNameMap = new Dictionary<string, string>();
 
-        runner.OnTestFailed = info =>
+        var sink = new TestMessageSink();
+        
+        // Track test names as they start
+        sink.Execution.TestStartingEvent += args =>
+        {
+            testNameMap[args.Message.TestUniqueID] = args.Message.TestDisplayName;
+        };
+
+        sink.Execution.TestFailedEvent += args =>
         {
             lock (consoleLock)
             {
                 failed++;
+                var testName = testNameMap.TryGetValue(args.Message.TestUniqueID, out var name) ? name : "Unknown test";
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("  [FAIL] ");
                 Console.ResetColor();
-                Console.WriteLine(info.TestDisplayName);
-                Console.WriteLine($"         {info.ExceptionMessage}");
-                if (!string.IsNullOrEmpty(info.ExceptionStackTrace))
+                Console.WriteLine(testName);
+                if (args.Message.Messages?.Length > 0)
                 {
-                    foreach (var line in info.ExceptionStackTrace.Split('\n'))
+                    Console.WriteLine($"         {args.Message.Messages[0]}");
+                }
+                if (args.Message.StackTraces?.Length > 0 && args.Message.StackTraces[0] != null && !string.IsNullOrEmpty(args.Message.StackTraces[0]))
+                {
+                    foreach (var line in args.Message.StackTraces[0].Split('\n'))
                     {
                         Console.WriteLine($"         {line}");
                     }
@@ -44,37 +98,48 @@ public static class TestRunner
             }
         };
 
-        runner.OnTestPassed = info =>
+        sink.Execution.TestPassedEvent += args =>
         {
             lock (consoleLock)
             {
                 passed++;
+                var testName = testNameMap.TryGetValue(args.Message.TestUniqueID, out var name) ? name : "Unknown test";
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write("  [PASS] ");
                 Console.ResetColor();
-                Console.WriteLine(info.TestDisplayName);
+                Console.WriteLine(testName);
             }
         };
 
-        runner.OnTestSkipped = info =>
+        sink.Execution.TestSkippedEvent += args =>
         {
             lock (consoleLock)
             {
                 skipped++;
+                var testName = testNameMap.TryGetValue(args.Message.TestUniqueID, out var name) ? name : "Unknown test";
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("  [SKIP] ");
                 Console.ResetColor();
-                Console.WriteLine($"{info.TestDisplayName} - {info.SkipReason}");
+                Console.WriteLine($"{testName} - {args.Message.Reason}");
             }
         };
 
-        var tcs = new TaskCompletionSource<bool>();
-        runner.OnExecutionComplete = info => tcs.SetResult(true);
+        // Run tests using ConsoleRunnerInProcess
+        var cts = new CancellationTokenSource();
+        var assembly = Assembly.LoadFrom(assemblyPath);
+        
+        // Create XunitProjectAssembly for the test assembly
+        var project = new XunitProject();
+        var targetFramework = assembly.GetCustomAttribute<System.Runtime.Versioning.TargetFrameworkAttribute>()?.FrameworkName 
+            ?? ".NETCoreApp,Version=v10.0";
+        var metadata = new AssemblyMetadata(3, targetFramework); // xUnit v3
+        var projectAssembly = new XunitProjectAssembly(project, assemblyPath, metadata)
+        {
+            Assembly = assembly,
+            ConfigFileName = null,
+        };
 
-        runner.Start();
-        await tcs.Task;
-        await Task.Delay(100); // Allow runner to transition to idle state before disposal
-        runner.Dispose();
+        await ConsoleRunnerInProcess.Run(sink, sink.Diagnostics, projectAssembly, cts);
 
         var duration = DateTime.Now - startTime;
 
