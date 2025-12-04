@@ -1,15 +1,15 @@
 # SingleFileTestRunner
 
-[![NuGet](https://img.shields.io/nuget/v/Ardalis.SingleFileTestRunner.svg)](https://www.nuget.org/packages/Ardalis.SingleFileTestRunner)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/Ardalis.SingleFileTestRunner.svg)](https://www.nuget.org/packages/Ardalis.SingleFileTestRunner)
+[![NuGet](https://img.shields.io/nuget/v/Ardalis.SingleFileTestRunner.xUnitV3.svg)](https://www.nuget.org/packages/Ardalis.SingleFileTestRunner.xUnitV3)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Ardalis.SingleFileTestRunner.xUnitV3.svg)](https://www.nuget.org/packages/Ardalis.SingleFileTestRunner.xUnitV3)
 
-A lightweight package for running xUnit tests in single-file C# applications. Perfect for quick test scripts, learning scenarios, or standalone test executables.
+A lightweight package for running xUnit v3 tests in single-file C# applications. Perfect for quick test scripts, learning scenarios, or standalone test executables.
 
 ## Installation
 
 ```bash
-dotnet add package Ardalis.SingleFileTestRunner
-dotnet add package xunit
+dotnet add package Ardalis.SingleFileTestRunner.xUnitV3
+dotnet add package xunit.v3
 ```
 
 ## Quick Start
